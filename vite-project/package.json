@@ -1,5 +1,6 @@
 {
   "name": "vite-project",
+  "homepage": "https://jmanigo15.github.io/POC-LOTTO/",
   "private": true,
   "version": "0.0.0",
   "type": "module",
