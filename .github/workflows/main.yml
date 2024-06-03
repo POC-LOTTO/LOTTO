@@ -45,10 +45,10 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: poduction file
-          path: ./vite-project/dist
+          path: /vite-project/dist
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.POC_LOTTO }} #this is the key of the access token
-          publish_dir: ./vite-project/dist
+          publish_dir: /vite-project/dist
