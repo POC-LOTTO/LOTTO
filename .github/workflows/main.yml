@@ -35,20 +35,20 @@ jobs:
           path: ./vite-project/build
 
   # Deploy Job
-  # deploy:
+  deploy:
    
-  #   needs: build
+    needs: build
     
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: poduction file
-  #         path: ./vite-project/build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: poduction file
+          path: ./vite-project/dist
 
-  #     - name: Deploy to GitHub Pages
-  #       uses: peaceiris/actions-gh-pages@v3
-  #       with:
-  #         github_token: ${{ secrets.POC_LOTTO }} #this is the key of the access token
-  #         publish_dir: ./vite-project/build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.POC_LOTTO }} #this is the key of the access token
+          publish_dir: ./vite-project/dist
