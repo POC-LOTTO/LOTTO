@@ -3,7 +3,7 @@ name: CI/CD for React
 on:
   push:
     branches:
-      - main
+      - '**'  # Triggers on push to any branch
 
 jobs:
   # Build Job
@@ -42,6 +42,7 @@ jobs:
   # Deploy Job
   deploy:
     needs: build
+    if: github.ref == 'refs/heads/main'  # Only deploy if the branch is main
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
