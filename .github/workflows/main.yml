@@ -22,16 +22,16 @@ jobs:
         run: |
           cd vite-project
           npm install
+          
+      - name: Run Tests
+        run: |
+          cd vite-project
+          npm test
 
       - name: Build Project
         run: |
           cd vite-project
           npm run build
-
-      - name: Build Project
-        run: |
-          cd vite-project
-          npm run test
 
       - name: Upload artifact to enable deployment
         uses: actions/upload-artifact@v3
