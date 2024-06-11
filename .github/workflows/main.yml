@@ -21,16 +21,19 @@ jobs:
 
       - name: Download current production artifact
         if: github.ref == 'refs/heads/main'
+        id: download-artifact
         uses: actions/download-artifact@v3
         with:
           name: production-file
           path: current-production
-          # Add this output to check if the artifact is found
-          id: download_artifact
-          continue-on-error: true
+        continue-on-error: true
 
+      - name: Check if artifact exists
+        if: steps.download-artifact.outcome == 'success'
+        run: echo "Artifact exists"
+      
       - name: Upload previous production artifact
-        if: github.ref == 'refs/heads/main' && steps.download_artifact.outputs.found == 'true'
+        if: steps.download-artifact.outcome == 'success' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v3
         with:
           name: previous-production-file
@@ -89,8 +92,8 @@ jobs:
 
   # Rollback Job
   rollback:
-    runs-on: ubuntu-latest
     if: github.event.inputs.action == 'rollback'
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -99,7 +102,14 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: previous-production-file
+          path: previous-production
+        continue-on-error: false
 
-      # Add a step to verify the artifact contents if needed
       - name: List artifact contents
-        run: ls -l current-production
+        run: ls -l previous-production
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.POC_LOTTO }}
+          publish_dir: previous-production
