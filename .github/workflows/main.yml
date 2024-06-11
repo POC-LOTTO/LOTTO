@@ -6,14 +6,6 @@ on:
       - '**'  # Triggers on push to any branch
   workflow_dispatch:
     inputs:
-      revision:
-        description: 'The revision to rollback to'
-        required: true
-
-      branch:
-        description: 'The branch that the rollback affects'
-        required: true
-
       action:
         description: 'Specify action: deploy or rollback'
         required: true
@@ -76,35 +68,28 @@ jobs:
           path: vite-project/dist
 
   # Deploy Job
-  deploy:
-    needs: build
-    if: github.ref == 'refs/heads/main'  # Only deploy if the branch is main
-    runs-on: ubuntu-latest
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
-        with:
-          name: production-file
+  # deploy:
+  #   needs: build
+  #   if: github.ref == 'refs/heads/main'  # Only deploy if the branch is main
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Download artifact
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: production-file
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.POC_LOTTO }}
-          publish_dir: vite-project/dist
+  #     - name: Deploy to GitHub Pages
+  #       uses: peaceiris/actions-gh-pages@v3
+  #       with:
+  #         github_token: ${{ secrets.POC_LOTTO }}
+  #         publish_dir: vite-project/dist
 
   # Rollback Job
   rollback:
     runs-on: ubuntu-latest
     if: github.event.inputs.action == 'rollback'
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Download previous artifact
+        uses: actions/download-artifact@v3
         with:
-           ref: ${{ github.event.inputs.branch }}
-           fetch-depth: 0
-
-      - name: Rolls back to a certain version
-        uses: fivebluepetals/rollback-action@v1.0
-        with:
-          branch: ${{ github.event.inputs.branch }}
-          revision: ${{ github.event.inputs.revision }}
+          name: previous-production-file
