@@ -17,16 +17,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download current production artifact
         if: github.ref == 'refs/heads/main'
         id: download-artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: production-file
           path: current-production
-        continue-on-error: true
 
       - name: Check if artifact exists
         if: steps.download-artifact.outcome == 'success'
@@ -34,7 +33,7 @@ jobs:
       
       - name: Upload previous production artifact
         if: steps.download-artifact.outcome == 'success' && github.ref == 'refs/heads/main'
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: previous-production-file
           path: current-production
@@ -45,10 +44,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20.x
 
@@ -68,7 +67,7 @@ jobs:
           npm run build
 
       - name: Upload artifact to enable deployment
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: production-file
           path: vite-project/dist
@@ -80,12 +79,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: production-file
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.POC_LOTTO }}
           publish_dir: vite-project/dist
@@ -96,10 +95,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download previous artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: previous-production-file
           path: previous-production
@@ -109,7 +108,7 @@ jobs:
         run: ls -l previous-production
 
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.POC_LOTTO }}
           publish_dir: previous-production
