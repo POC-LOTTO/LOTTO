@@ -20,11 +20,14 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download current production artifact
-        if: github.ref == 'refs/heads/main' && steps.download_artifact.outputs.found == 'true'
+        if: github.ref == 'refs/heads/main'
         uses: actions/download-artifact@v3
         with:
           name: production-file
           path: current-production
+          # Add this output to check if the artifact is found
+          id: download_artifact
+          continue-on-error: true
 
       - name: Upload previous production artifact
         if: github.ref == 'refs/heads/main' && steps.download_artifact.outputs.found == 'true'
@@ -68,21 +71,21 @@ jobs:
           path: vite-project/dist
 
   # Deploy Job
-  # deploy:
-  #   needs: build
-  #   if: github.ref == 'refs/heads/main'  # Only deploy if the branch is main
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Download artifact
-  #       uses: actions/download-artifact@v3
-  #       with:
-  #         name: production-file
+  deploy:
+    needs: build
+    if: github.ref == 'refs/heads/main'  # Only deploy if the branch is main
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: production-file
 
-  #     - name: Deploy to GitHub Pages
-  #       uses: peaceiris/actions-gh-pages@v3
-  #       with:
-  #         github_token: ${{ secrets.POC_LOTTO }}
-  #         publish_dir: vite-project/dist
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.POC_LOTTO }}
+          publish_dir: vite-project/dist
 
   # Rollback Job
   rollback:
@@ -96,3 +99,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: previous-production-file
+
+      # Add a step to verify the artifact contents if needed
+      - name: List artifact contents
+        run: ls -l current-production
