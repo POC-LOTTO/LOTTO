@@ -20,14 +20,19 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Download current production artifact
-        if: github.ref == 'refs/heads/main' && steps.download_artifact.outputs.found == 'true'
+        id: download_current
         uses: actions/download-artifact@v3
         with:
           name: production-file
           path: current-production
+        continue-on-error: true
+
+      - name: Check if artifact exists
+        id: artifact-check
+        run: echo "artifact_exists=$(if [ -d 'current-production' ]; then echo 'true'; else echo 'false'; fi)" >> $GITHUB_ENV
 
       - name: Upload previous production artifact
-        if: github.ref == 'refs/heads/main' && steps.download_artifact.outputs.found == 'true'
+        if: env.artifact_exists == 'true'
         uses: actions/upload-artifact@v3
         with:
           name: previous-production-file
@@ -44,13 +49,13 @@ jobs:
       - name: Install Node
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: 20.x
 
       - name: Install Dependencies
         run: |
           cd vite-project
           npm install
-          
+
       - name: Run Tests
         run: |
           cd vite-project
@@ -90,11 +95,17 @@ jobs:
     if: github.event.inputs.action == 'rollback'
     steps:
       - name: Download previous artifact
+        id: download_previous
         uses: actions/download-artifact@v3
         with:
           name: previous-production-file
+        continue-on-error: true
+
+      - name: Check if previous artifact exists
+        run: if [ ! -d 'vite-project/dist' ]; then echo "No previous artifact found. Exiting."; exit 1; fi
 
       - name: Deploy to GitHub Pages
+        if: success()
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.POC_LOTTO }}
