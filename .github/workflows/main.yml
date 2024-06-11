@@ -4,10 +4,38 @@ on:
   push:
     branches:
       - '**'  # Triggers on push to any branch
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Specify action: deploy or rollback'
+        required: true
+        default: 'deploy'
 
 jobs:
+  # Save Previous Production File Job
+  save-previous-production-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Download current production artifact
+        if: github.ref == 'refs/heads/main' && steps.download_artifact.outputs.found == 'true'
+        uses: actions/download-artifact@v3
+        with:
+          name: production-file
+          path: current-production
+
+      - name: Upload previous production artifact
+        if: github.ref == 'refs/heads/main' && steps.download_artifact.outputs.found == 'true'
+        uses: actions/upload-artifact@v3
+        with:
+          name: previous-production-file
+          path: current-production
+
   # Build Job
   build:
+    needs: save-previous-production-file
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -53,5 +81,21 @@ jobs:
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
-          github_token: ${{ secrets.POC_LOTTO }}  
+          github_token: ${{ secrets.POC_LOTTO }}
+          publish_dir: vite-project/dist
+
+  # Rollback Job
+  rollback:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.action == 'rollback'
+    steps:
+      - name: Download previous artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: previous-production-file
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.POC_LOTTO }}
           publish_dir: vite-project/dist
