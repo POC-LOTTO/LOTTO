@@ -14,6 +14,7 @@ on:
 jobs:
   # Save Previous Production File Job
   save-previous-production-file:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -21,7 +22,6 @@ jobs:
 
       - name: Download current production artifact
         id: download_artifact
-        if: github.ref == 'refs/heads/main'
         uses: actions/download-artifact@v4
         with:
           name: production-file
@@ -29,16 +29,15 @@ jobs:
 
       - name: Check if artifact exists
         id: check_artifact
-        if: github.ref == 'refs/heads/main'
         run: |
-          if [ -d "current-production" ]; then
+          if [ -d "current-production" ] && [ "$(ls -A current-production)" ]; then
             echo "found=true" >> $GITHUB_ENV
           else
             echo "found=false" >> $GITHUB_ENV
           fi
 
       - name: Upload previous production artifact
-        if: github.ref == 'refs/heads/main' && env.found == 'true'
+        if: env.found == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: previous-production-file
