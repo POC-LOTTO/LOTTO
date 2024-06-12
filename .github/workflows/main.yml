@@ -22,12 +22,12 @@ jobs:
         with:
           token: ${{ github.TOKEN }}
 
-      - name: Download current production artifact
-        id: download_artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: previous-production-file
-          github-token: ${{ secrets.POC_LOTTO }}
+      # - name: Download current production artifact
+      #   id: download_artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: previous-production-file
+      #     github-token: ${{ secrets.POC_LOTTO }}
 
       - name: Upload previous production artifact
         uses: actions/upload-artifact@v4
@@ -66,6 +66,7 @@ jobs:
       - name: Upload artifact to enable deployment
         uses: actions/upload-artifact@v4
         with:
+          name: production-file
           path: vite-project/dist
           retention-days: 7
 
