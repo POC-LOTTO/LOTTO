@@ -11,17 +11,42 @@ on:
         required: true
         default: 'deploy'
 
-      branch:
-        description: 'Branch to roll back'
-        required: true
-        default: 'main'
-      commit_hash:
-        description: 'Commit hash to roll back to'
-        required: true
-
 jobs:
+  # Save Previous Production File Job
+  save-previous-production-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Download current production artifact
+        id: download_artifact
+        if: github.ref == 'refs/heads/main'
+        uses: actions/download-artifact@v4
+        with:
+          name: production-file
+          path: current-production
+
+      - name: Check if artifact exists
+        id: check_artifact
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [ -d "current-production" ]; then
+            echo "found=true" >> $GITHUB_ENV
+          else
+            echo "found=false" >> $GITHUB_ENV
+          fi
+
+      - name: Upload previous production artifact
+        if: github.ref == 'refs/heads/main' && env.found == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: previous-production-file
+          path: current-production
+
   # Build Job
   build:
+    needs: save-previous-production-file
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -53,22 +78,14 @@ jobs:
           name: production-file
           path: vite-project/dist
 
-          
 
   # Rollback Job
   rollback:
-    if: github.event.inputs.action == 'rollback'
     runs-on: ubuntu-latest
+    if: github.event.inputs.action == 'rollback'
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Download previous artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: previous-production-file
 
-      - name: Reset branch to commit hash
-        run: |
-          BRANCH=${{ github.event.inputs.branch }}
-          COMMIT_HASH=${{ github.event.inputs.commit_hash }}
-          git checkout main
-          git reset --hard $COMMIT_HASH
-          git push origin main --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.POC_LOTTO }}
