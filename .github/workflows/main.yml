@@ -67,8 +67,8 @@ jobs:
         run: |
           BRANCH=${{ github.event.inputs.branch }}
           COMMIT_HASH=${{ github.event.inputs.commit_hash }}
-          git checkout $BRANCH
+          git checkout main
           git reset --hard $COMMIT_HASH
-          git push origin $BRANCH --force
+          git push origin main --force
         env:
           GITHUB_TOKEN: ${{ secrets.POC_LOTTO }}
