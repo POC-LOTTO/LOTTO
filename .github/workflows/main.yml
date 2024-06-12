@@ -12,32 +12,8 @@ on:
         default: 'deploy'
 
 jobs:
-  # Save Previous Production File Job
-  save-previous-production-file:
-    if: github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-        with:
-          token: ${{ github.TOKEN }}
-
-      # - name: Download current production artifact
-      #   id: download_artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: previous-production-file
-      #     github-token: ${{ secrets.POC_LOTTO }}
-
-      - name: Upload previous production artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: previous-production-file
-          github-token: ${{ secrets.POC_LOTTO }}
-
   # Build Job
   build:
-    needs: save-previous-production-file
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -69,6 +45,15 @@ jobs:
           name: production-file
           path: vite-project/dist
           retention-days: 7
+
+
+      - name: Download current production artifact
+        if: github.ref == 'refs/heads/main'
+        id: download-artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: production-file
+
 
   # Rollback Job
   rollback:
