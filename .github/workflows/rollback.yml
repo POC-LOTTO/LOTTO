@@ -1,0 +1,25 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: 'Specify action: rollback'
+        required: true
+        default: 'rollback'
+
+jobs:
+  rollback:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.action == 'rollback'
+    steps:
+      - name: Download previous artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: previous-production-file
+          path: rollback-production-file
+
+      # Add your rollback steps here
+      # Example:
+      # - name: Rollback to Previous Version
+      #   run: scp -r rollback-production-file/* user@server:/path/to/deploy
