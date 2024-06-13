@@ -3,6 +3,9 @@
 # Navigate to the app directory
 cd /var/www/html/lotto/LOTTO
 
+# Start the app using PM2
+pm2 start npm --name "marketing" -- start
+
 # Ensure PM2 starts on boot
 pm2 startup systemd
 sudo env PATH=$PATH:/usr/bin pm2 startup systemd -u $USER --hp /home/$USER
