@@ -1,7 +1,7 @@
 version: 0.0
 os: linux
 files:
-  - source: dist/
+  - source: vite-project/dist/
     destination: /var/www/html/lotto/LOTTO
     overwrite: yes
 
