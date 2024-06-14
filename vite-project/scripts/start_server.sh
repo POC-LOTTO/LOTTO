@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Navigate to the app directory
-cd /var/www/html/lotto/LOTTO
+cd /var/www/html
 
 # Start the app using PM2
 # pm2 start npm --name "marketing" -- start
