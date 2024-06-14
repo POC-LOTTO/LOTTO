@@ -27,21 +27,18 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd vite-project
           npm install
           
       - name: Run Tests
         run: |
-          cd vite-project
           npm test
 
       - name: Build Project
         run: |
-          cd vite-project
           npm run build
 
       - name: Upload artifact to enable deployment
         uses: actions/upload-artifact@v4
         with:
           name: production-file
-          path: vite-project/dist
+          path: dist

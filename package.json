@@ -10,7 +10,8 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest",
-    "prepare": "husky"
+    "prepare": "husky",
+    "start": "pm2 start npm --name \"vite-app\" -- start"
   },
   "dependencies": {
     "react": "^18.2.0",
