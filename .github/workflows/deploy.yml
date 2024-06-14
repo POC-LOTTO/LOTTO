@@ -26,7 +26,6 @@ jobs:
           cp appspec.yml deploy-package/
           cp -r scripts deploy-package/
           cp package.json deploy-package/
-          cp package-lock.json deploy-package/
           cp -r public deploy-package/
           cp -r src deploy-package/
           cp .babelrc deploy-package/
