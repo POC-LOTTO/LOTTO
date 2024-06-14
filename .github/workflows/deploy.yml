@@ -33,7 +33,7 @@ jobs:
           cp .eslintrc.cjs deploy-package/
           cp .gitignore deploy-package/
           cp index.html deploy-package/
-          cp jest.config.js deploy-package/
+          cp jest.config.jsx deploy-package/
           cp README.md deploy-package/
           cp setupTests.js deploy-package/
           cp vite.config.js deploy-package/
