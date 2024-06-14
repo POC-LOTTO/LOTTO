@@ -1,10 +1,12 @@
 #!/bin/bash
-
 # Navigate to the app directory
 cd /var/www/html
 
+# Build the React Vite app
+npm run build
+
 # Start the app using PM2
-# pm2 start npm --name "marketing" -- start
+pm2 start npm --name "vite-app" -- start
 
 # Ensure PM2 starts on boot
 pm2 startup systemd

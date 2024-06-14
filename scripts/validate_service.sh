@@ -1,7 +1,8 @@
 #!/bin/bash
-
 # Check if the server is running by sending a request to localhost
 HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" http://localhost)
+
+echo "HTTP Status: $HTTP_STATUS"
 
 if [ "$HTTP_STATUS" -eq 200 ]; then
   echo "Validation successful"
