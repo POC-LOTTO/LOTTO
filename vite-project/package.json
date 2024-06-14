@@ -10,8 +10,8 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test": "jest",
-    "prepare": "husky",
-    "start": "vite preview"
+    "prepare": "husky"
+    // "start": "vite preview"
   },
   "dependencies": {
     "react": "^18.2.0",
