@@ -1,8 +1,8 @@
 version: 0.0
 os: linux
 files:
-  - source: .
-    destination: /var/www/
+  - source: /dist/
+    destination: /var/www/html/lotto
     overwrite: yes
 
 hooks:
