@@ -12,8 +12,8 @@ echo "Changed directory to /var/www/html/LOTTO at $(date)" >> $LOGFILE
 npm run build
 echo "Built React Vite app at $(date)" >> $LOGFILE
 
-# Start the app using PM2
-pm2 start npm --name "vite-app" -- run start
+# Start the app using PM2 from the correct directory
+pm2 start npm --name "vite-app" -- start --cwd /var/www/html/LOTTO
 echo "Started app with PM2 at $(date)" >> $LOGFILE
 
 # Ensure PM2 starts on boot
