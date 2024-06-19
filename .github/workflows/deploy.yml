@@ -21,6 +21,7 @@ jobs:
 
       - name: Archive production artifacts
         run: |
+          TIMESTAMP=$(date +%Y%m%d%H%M%S)
           mkdir deploy-package
           cp -r dist deploy-package/
           cp appspec.yml deploy-package/
@@ -37,7 +38,7 @@ jobs:
           cp setupTests.js deploy-package/
           cp vite.config.js deploy-package/
           cd deploy-package
-          zip -r ../deploy-package-${{ github.sha }}.zip .
+          zip -r ../deploy-package-${{ github.sha }}-${TIMESTAMP}.zip .
           cd ..
 
       - name: Configure AWS credentials
