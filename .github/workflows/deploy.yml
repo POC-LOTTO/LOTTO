@@ -47,12 +47,12 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_DEPLOY_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Store previous deployment package
-        run: |
-          PREVIOUS_PACKAGE=$(aws s3api list-objects-v2 --bucket ${{ secrets.S3_BUCKET }} --query 'Contents[].[Key]' --output text | grep deploy-package)
-          if [ -n "$PREVIOUS_PACKAGE" ]; then
-            aws s3 cp s3://${{ secrets.S3_BUCKET }}/$PREVIOUS_PACKAGE s3://${{ secrets.S3_BUCKET }}/previous-${{ github.sha }}.zip
-          fi
+      # - name: Store previous deployment package
+      #   run: |
+      #     PREVIOUS_PACKAGE=$(aws s3api list-objects-v2 --bucket ${{ secrets.S3_BUCKET }} --query 'Contents[].[Key]' --output text | grep deploy-package)
+      #     if [ -n "$PREVIOUS_PACKAGE" ]; then
+      #       aws s3 cp s3://${{ secrets.S3_BUCKET }}/$PREVIOUS_PACKAGE s3://${{ secrets.S3_BUCKET }}/previous-${{ github.sha }}.zip
+      #     fi
 
       - name: Upload new deployment package
         run: aws s3 cp deploy-package-${{ github.sha }}.zip s3://${{ secrets.S3_BUCKET }}/deploy-package-${{ github.sha }}.zip
