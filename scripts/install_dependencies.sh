@@ -5,8 +5,6 @@ sudo apt-get update -y
 # Install Node.js and npm
 sudo apt-get install -y nodejs npm
 
-# Install PM2 globally
-sudo npm install -g pm2
 
 
 # Ensure the correct ownership of the application directory
