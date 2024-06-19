@@ -17,7 +17,7 @@ pm2 start npm --name "vite-app" -- run start
 echo "Started app with PM2 at $(date)" >> $LOGFILE
 
 # Ensure PM2 starts on boot
-pm2 startup systemd -u $USER --hp /home/$USER
+pm2 startup systemd -u ubuntu --hp /home/ubuntu
 pm2 save
 echo "PM2 startup configured at $(date)" >> $LOGFILE
 

@@ -8,6 +8,11 @@ sudo apt-get install -y nodejs npm
 # Install PM2 globally
 sudo npm install -g pm2
 
+
+# Ensure the correct ownership of the application directory
+sudo chown -R ubuntu:ubuntu /var/www/html/LOTTO
+sudo chmod -R 755 /var/www/html/LOTTO
+
 # Navigate to the app directory
 cd /var/www/html/LOTTO
 
