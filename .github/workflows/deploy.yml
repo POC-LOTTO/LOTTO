@@ -50,20 +50,20 @@ jobs:
 
       - name: Store previous deployment package
         run: |
-          PREVIOUS_PACKAGE=$(aws s3api list-objects-v2 --bucket ${{ secrets.S3_BUCKET }} --query 'Contents[].[Key]' --output text | grep deploy-package)
-          if [ -n "$PREVIOUS_PACKAGE" ]; then
-            aws s3 cp s3://${{ secrets.S3_BUCKET }}/$PREVIOUS_PACKAGE s3://${{ secrets.S3_BUCKET }}/previous-${{ github.sha }}.zip
-          fi
-
+            PREVIOUS_PACKAGE=$(aws s3api list-objects-v2 --bucket ${{ secrets.S3_BUCKET }} --query 'Contents[].[Key]' --output text | grep deploy-package)
+            if [ -n "$PREVIOUS_PACKAGE" ]; then
+              aws s3 cp s3://${{ secrets.S3_BUCKET }}/$PREVIOUS_PACKAGE s3://${{ secrets.S3_BUCKET }}/previous-${TIMESTAMP}.zip
+            fi
+  
       - name: Upload new deployment package
-        run: aws s3 cp deploy-package-${{ github.sha }}.zip s3://${{ secrets.S3_BUCKET }}/deploy-package-${{ github.sha }}.zip
-
+        run: aws s3 cp deploy-package-${{ env.TIMESTAMP }}.zip s3://${{ secrets.S3_BUCKET }}/deploy-package-${{ env.TIMESTAMP }}.zip
+  
       - name: Deploy to CodeDeploy
         id: deploy
         run: |
-          DEPLOYMENT_ID=$(aws deploy create-deployment \
-            --application-name ${{ secrets.AWS_CODE_DEPLOY_APPLICATION_NAME }} \
-            --deployment-group-name ${{ secrets.AWS_DEPLOYMENT_GROUP_NAME }} \
-            --s3-location bucket=${{ secrets.S3_BUCKET }},key=deploy-package-${{ github.sha }}.zip,bundleType=zip \
-            --query "deploymentId" --output text)
-          echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> $GITHUB_ENV
+            DEPLOYMENT_ID=$(aws deploy create-deployment \
+              --application-name ${{ secrets.AWS_CODE_DEPLOY_APPLICATION_NAME }} \
+              --deployment-group-name ${{ secrets.AWS_DEPLOYMENT_GROUP_NAME }} \
+              --s3-location bucket=${{ secrets.S3_BUCKET }},key=deploy-package-${{ env.TIMESTAMP }}.zip,bundleType=zip \
+              --query "deploymentId" --output text)
+            echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> $GITHUB_ENV
