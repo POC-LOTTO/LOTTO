@@ -13,7 +13,7 @@ sudo apt install -y nodejs
 sudo npm install -g pm2
 
 # Navigate to the app directory
-cd /var/www/html
+cd /var/www/html/LOTTO
 
 # Install project dependencies
 npm install
