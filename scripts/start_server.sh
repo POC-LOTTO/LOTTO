@@ -2,6 +2,9 @@
 # Navigate to the app directory
 cd /var/www/html/LOTTO
 
+# Install Vite globally (if not already installed)
+npm install -g vite
+
 # Build the React Vite app
 npm run build
 
