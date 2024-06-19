@@ -3,11 +3,7 @@
 sudo apt-get update -y
 
 # Install Node.js and npm
-sudo apt install npm -y
-
-curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
-
-sudo apt install -y nodejs
+sudo apt-get install -y nodejs npm
 
 # Install PM2 globally
 sudo npm install -g pm2
