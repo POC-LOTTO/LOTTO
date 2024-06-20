@@ -1,15 +1,9 @@
-name: Build Artifact
+name: Build Artif
 
 on:
   push:
     branches:
       - '**'  # Triggers on push to any branch
-  # workflow_dispatch:
-  #   inputs:
-  #     action:
-  #       description: 'Specify action: deploy'
-  #       required: true
-  #       default: 'deploy'
 
 jobs:
   # Build Job
