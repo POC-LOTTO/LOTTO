@@ -1,25 +1,70 @@
-name: Rollback
+name: Rollback Deployment
 
 on:
   workflow_dispatch:
     inputs:
-      action:
-        description: 'Specify action: rollback'
+      commit_id:
+        description: 'Commit ID SHA to rollback to'
         required: true
-        default: 'rollback'
+  workflow_run:
+    workflows: ["Deploy Artifact"]
+    types:
+      - completed
 
 jobs:
+
   rollback:
     runs-on: ubuntu-latest
-    if: github.event.inputs.action == 'rollback'
-    steps:
-      - name: Download previous artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: previous-production-file
-          path: rollback-production-file
 
-      # Add your rollback steps here
-      # Example:
-      # - name: Rollback to Previous Version
-      #   run: scp -r rollback-production-file/* user@server:/path/to/deploy
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.commit_id }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npm run build
+
+      - name: Archive production artifacts
+        run: |
+          mkdir deploy-package
+          cp -r dist deploy-package/
+          cp appspec.yml deploy-package/
+          cp -r scripts deploy-package/
+          cp package.json deploy-package/
+          cp -r public deploy-package/
+          cp -r src deploy-package/
+          cp .babelrc deploy-package/
+          cp .eslintrc.cjs deploy-package/
+          cp .gitignore deploy-package/
+          cp index.html deploy-package/
+          cp jest.config.jsx deploy-package/
+          cp README.md deploy-package/
+          cp setupTests.js deploy-package/
+          cp vite.config.js deploy-package/
+          cd deploy-package
+          zip -r ../deploy-package-${{ github.event.inputs.commit_id }}.zip .
+          cd ..
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_DEPLOY_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_DEPLOY_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload new deployment package
+        run: aws s3 cp deploy-package-${{ github.event.inputs.commit_id }}.zip s3://${{ secrets.S3_BUCKET }}/deploy-package-${{ github.event.inputs.commit_id }}.zip
+
+      - name: Deploy to CodeDeploy
+        id: deploy
+        run: |
+          DEPLOYMENT_ID=$(aws deploy create-deployment \
+            --application-name ${{ secrets.AWS_CODE_DEPLOY_APPLICATION_NAME }} \
+            --deployment-group-name ${{ secrets.AWS_DEPLOYMENT_GROUP_NAME }} \
+            --s3-location bucket=${{ secrets.S3_BUCKET }},key=deploy-package-${{ github.event.inputs.commit_id }}.zip,bundleType=zip \
+            --query "deploymentId" --output text)
+          echo "DEPLOYMENT_ID=$DEPLOYMENT_ID" >> $GITHUB_ENV
