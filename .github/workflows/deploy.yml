@@ -5,11 +5,10 @@ on:
     branches:
       - main
   workflow_run:
-        workflows: ["Build Artifact"]
-        types:
-          - completed
+    workflows: ["Build Artifact"]
+    types:
+      - completed
 
-              
 jobs:
 
   deploy:
