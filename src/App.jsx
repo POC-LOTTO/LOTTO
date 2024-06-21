@@ -26,7 +26,7 @@ function App() {
         </p>
       </div>
       <p className="read-the-docs">
-      REACT + VITE
+      REACT + VITE TEST PUSH
       </p>
       {/* <h1>Test Auto Deploy GG123</h1> */}
     </>
