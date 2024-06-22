@@ -1,6 +1,6 @@
 #!/bin/bash
 # Navigate to the app directory
-cd /var/www/html/LOTTO
+cd /var/www/html/lotto-web-client
 
 # Build the React Vite app
 npm run build

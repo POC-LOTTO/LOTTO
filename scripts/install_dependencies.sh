@@ -8,11 +8,11 @@ sudo apt-get install -y nodejs npm
 
 
 # Ensure the correct ownership of the application directory
-sudo chown -R ubuntu:ubuntu /var/www/html/LOTTO
-sudo chmod -R 755 /var/www/html/LOTTO
+sudo chown -R ubuntu:ubuntu /var/www/html/lotto-web-client
+sudo chmod -R 755 /var/www/html/lotto-web-client
 
 # Navigate to the app directory
-cd /var/www/html/LOTTO
+cd /var/www/html/lotto-web-client
 
 # Install project dependencies
 npm install
